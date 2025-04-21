@@ -28,6 +28,6 @@ contract SentinelNFT is ERC721, Ownable {
         tokenURIs[tokenId] = tokenURI;
         tokenId++;
 
-        core.registerPolicy(tokenId, to, tokenURI, duration);
+        core.registerPolicy(tokenId - 1, to, tokenURI, duration);
     }
 }
