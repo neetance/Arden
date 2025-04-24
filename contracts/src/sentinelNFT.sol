@@ -8,7 +8,8 @@ import {SentinelCore} from "./sentinelCore.sol";
 contract SentinelNFT is ERC721, Ownable {
     uint256 public tokenId;
 
-    mapping(uint256 tokenId => string tokenURI) tokenURIs;
+    mapping(uint256 tokenId => string tokenURI) descriptions;
+    mapping(uint256 tokenId => string data) claimData;
 
     SentinelCore public core;
 
@@ -21,13 +22,29 @@ contract SentinelNFT is ERC721, Ownable {
 
     function mint(
         address to,
-        string memory tokenURI,
+        string memory description,
         uint256 duration
     ) external onlyOwner {
         _safeMint(to, tokenId);
-        tokenURIs[tokenId] = tokenURI;
+        descriptions[tokenId] = description;
         tokenId++;
 
-        core.registerPolicy(tokenId - 1, to, tokenURI, duration);
+        core.registerPolicy(tokenId - 1, to, description, duration);
     }
+
+    function getDescription(uint256 id) external view returns (string memory) {
+        return descriptions[id];
+    }
+
+    function setClaimData(uint256 id, string memory claim) external {
+        claimData[id] = claim;
+    }
+
+    function getClaimData(uint256 id) external view returns (string memory) {
+        return claimData[id];
+    }
+
+    // function tokenURI(uint256 id) public view override returns (string memory) {
+    //     return string(abi.encodePacked())
+    // }
 }

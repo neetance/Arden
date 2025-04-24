@@ -13,6 +13,7 @@ contract MyServiceManager {
     error Already_Voted();
     error Not_Delegated();
     error Reached_Deadline();
+    error Voting_Ongoing();
 
     event NewClaim(uint256 indexed claimId, uint32 claimCreatedBlock);
     event ClaimResponded(
@@ -36,6 +37,7 @@ contract MyServiceManager {
         uint256 posVotes;
         uint256 negVotes;
         uint256 deadline;
+        address[] voters;
     }
 
     modifier onlyOperator() {
@@ -108,14 +110,18 @@ contract MyServiceManager {
         Claim storage storedClaim = claims[claim.claimId];
         if (vote) storedClaim.posVotes++;
         else storedClaim.negVotes++;
+        storedClaim.voters.push(msg.sender);
+        claims[claim.claimId] = storedClaim;
 
         emit ClaimResponded(msg.sender, claim.claimId, claim.claimCreatedBlock);
     }
 
     function getResult(
         uint256 claimId
-    ) external view returns (uint256, uint256) {
+    ) external view returns (uint256, uint256, address[] memory) {
         Claim memory claim = claims[claimId];
-        return (claim.posVotes, claim.negVotes);
+        if (block.timestamp < claim.deadline) revert Voting_Ongoing();
+
+        return (claim.posVotes, claim.negVotes, claim.voters);
     }
 }

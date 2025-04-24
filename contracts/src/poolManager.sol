@@ -7,14 +7,17 @@ contract PoolManager {
     error Value_Zero();
     error Withdraw_Amount_Zero();
     error Withdraw_Amount_Exceeds_Balance();
+    error Forbidden_Sender();
 
     event LiquidityAdded(address indexed user, uint256 amount);
     event LiquidityWithdrawn(address indexed user, uint256 amount);
 
     SentinelPool pool;
+    address public immutable core;
 
-    constructor(address poolAddr) {
+    constructor(address poolAddr, address coreAddr) {
         pool = SentinelPool(poolAddr);
+        core = coreAddr;
     }
 
     function addLiquidity() external payable {
@@ -38,6 +41,15 @@ contract PoolManager {
         pool.transferETH(msg.sender, withdrawAmount);
 
         emit LiquidityWithdrawn(msg.sender, withdrawAmount);
+    }
+
+    function makePayout(address to, uint256 amount) external {
+        if (msg.sender != core) revert Forbidden_Sender();
+        if (amount == 0) revert Withdraw_Amount_Zero();
+        if (amount > pool.balanceOf(address(this)))
+            revert Withdraw_Amount_Exceeds_Balance();
+
+        pool.transferETH(to, amount);
     }
 
     function getTotalLiquidity() public view returns (uint256) {
