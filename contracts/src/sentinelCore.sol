@@ -44,6 +44,9 @@ contract SentinelCore {
 
     // state variables
     uint256 public s_totalCount;
+    uint256 public MAX_PREMIUM = 0.07 ether;
+    uint256 public MIN_PREMIUM = 0.03 ether;
+
     MyServiceManager public s_avsManager;
     SentinelNFT public s_sentinelNFT;
     PoolManager public s_poolManager;
@@ -198,5 +201,17 @@ contract SentinelCore {
 
         s_poolManager.makePayout(to, netAmount);
         emit PayoutMade(to, voters, netAmount);
+    }
+
+    function getPremium() public view returns (uint256) {
+        uint256 base = 0.5 ether; // base currently set to 5
+        uint256 totalLiquidity = s_poolManager.getTotalLiquidity();
+        uint256 targetLiquidity = 100 ether;
+
+        uint256 premium = (base * targetLiquidity) / (10 * totalLiquidity); // 0.5 * (target / totalLiquidity)
+        if (premium > MAX_PREMIUM) premium = MAX_PREMIUM;
+        if (premium < MIN_PREMIUM) premium = MIN_PREMIUM;
+
+        return premium;
     }
 }

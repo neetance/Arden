@@ -7,6 +7,7 @@ import {IDelegationManager} from "../../lib/eigenlayer-contracts/src/contracts/i
 import {ECDSA} from "../../lib/solady/src/utils/ECDSA.sol";
 
 contract MyServiceManager {
+    // errors
     error Not_Operator();
     error Invalid_Sender();
     error Invalid_Claim();
@@ -15,6 +16,7 @@ contract MyServiceManager {
     error Reached_Deadline();
     error Voting_Ongoing();
 
+    // events
     event NewClaim(uint256 indexed claimId, uint32 claimCreatedBlock);
     event ClaimResponded(
         address indexed operator,
@@ -24,6 +26,7 @@ contract MyServiceManager {
 
     using ECDSA for bytes32;
 
+    // state variables
     address public immutable avsDirectory;
     address public immutable delegationManagerAddr;
     mapping(address => bool) public operatorRegistered;
@@ -31,6 +34,7 @@ contract MyServiceManager {
     mapping(uint256 => mapping(address => bool)) public hasVoted;
     mapping(uint256 => Claim) public claims;
 
+    // structs
     struct Claim {
         uint256 claimId;
         uint32 claimCreatedBlock;
@@ -40,16 +44,26 @@ contract MyServiceManager {
         address[] voters;
     }
 
+    // modifiers
     modifier onlyOperator() {
         if (!operatorRegistered[msg.sender]) revert Not_Operator();
         _;
     }
 
+    // constructor
     constructor(address _avsDirectory, address _delegationManager) {
         avsDirectory = _avsDirectory;
         delegationManagerAddr = _delegationManager;
     }
 
+    // functions
+
+    /**
+     * @dev Registers the operator to AVS.
+     * @param operator The address of the operator to register.
+     * @param operatorSignature The signature of the operator.
+     * NOTE: The operator must be delegated to register.
+     */
     function registerOperatorToAVS(
         address operator,
         ISignatureUtils.SignatureWithSaltAndExpiry memory operatorSignature
@@ -66,6 +80,11 @@ contract MyServiceManager {
         operatorRegistered[operator] = true;
     }
 
+    /**
+     * @dev Deregisters the operator from AVS.
+     * @param operator The address of the operator to deregister.
+     * NOTE: The sender must be the operator to deregister.
+     */
     function deregisterOperatorFromAVS(address operator) external onlyOperator {
         if (msg.sender != operator) {
             revert Invalid_Sender();
@@ -75,6 +94,13 @@ contract MyServiceManager {
         operatorRegistered[operator] = false;
     }
 
+    /**
+     * @dev Creates a new claim.
+     * @param claimId The ID of the claim to create.
+     * @return The created claim.
+     * NOTE: 1.The method is called by the core contract when a user claims their policy.
+     *       2.The claim is created with the current block number and a deadline of 7 days.
+     */
     function createClaim(uint256 claimId) external returns (Claim memory) {
         Claim memory claim;
         claim.claimId = claimId;
@@ -90,6 +116,13 @@ contract MyServiceManager {
         return claim;
     }
 
+    /**
+     * @dev Responds to a claim.
+     * @param claim The claim to respond to.
+     * @param vote The vote of the operator (true for positive, false for negative).
+     * @param signature The signature of the operator.
+     * NOTE: Can only be called by the operator.
+     */
     function respondToClaim(
         Claim memory claim,
         bool vote,
@@ -116,6 +149,12 @@ contract MyServiceManager {
         emit ClaimResponded(msg.sender, claim.claimId, claim.claimCreatedBlock);
     }
 
+    /**
+     * @dev Gets the result data of a claim.
+     * @param claimId The ID of the claim to get the result for.
+     * @return The positive votes, negative votes, and voters of the claim.
+     * NOTE: Can only be called after the voting period has ended.
+     */
     function getResult(
         uint256 claimId
     ) external view returns (uint256, uint256, address[] memory) {
