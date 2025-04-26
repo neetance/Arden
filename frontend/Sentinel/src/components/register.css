@@ -1,0 +1,393 @@
+/* ====== DeFi Insurance Platform - Main Styles ====== */
+
+:root {
+    /* Color Palette */
+    --primary-gradient: linear-gradient(135deg, #a9b388, #acb37b);
+    --bg-dark: #121212;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --border-light: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.2);
+    --text-primary: #ffffff;
+    --text-secondary: #e3e1e0;
+    --text-tertiary: #c7d3e2;
+    --text-muted: #a9b3c1;
+    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+  
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.5;
+  }
+  
+  /* ====== Insurance Page Layout ====== */
+  .insurance-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+  
+  .insurance-page h1 {
+    font-size: 36px;
+    margin-bottom: 24px;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+  }
+  
+  .insurance-form-container {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+  }
+  
+  /* ====== Insurance Form ====== */
+  .insurance-form {
+    flex: 2;
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s ease;
+  }
+  
+  .insurance-form:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .form-group {
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+  }
+  
+  /* Form Controls */
+  .insurance-form input[type="text"],
+  .insurance-form input[type="number"],
+  .insurance-form select,
+  .insurance-form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 15px;
+    transition: all 0.2s ease;
+  }
+  
+  .insurance-form input::placeholder,
+  .insurance-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+  
+  .insurance-form input:focus,
+  .insurance-form select:focus,
+  .insurance-form textarea:focus {
+    outline: none;
+    border-color: #acb37b;
+    box-shadow: 0 0 0 2px rgba(172, 179, 123, 0.2);
+  }
+  
+  .insurance-form select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+  
+  .insurance-form textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+  
+  /* Buttons */
+  .btn-primary {
+    display: inline-block;
+    background: var(--primary-gradient);
+    color: var(--bg-dark);
+    font-weight: 600;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(169, 179, 136, 0.3);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+  
+  /* ====== Quote Result Panel ====== */
+  .quote-result {
+    flex: 1;
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 32px;
+    animation: fadeIn 0.4s ease;
+    transition: all 0.3s ease;
+  }
+  
+  .quote-result:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-hover);
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .quote-result h2 {
+    font-size: 24px;
+    margin-bottom: 24px;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+  
+  .quote-details {
+    margin-bottom: 32px;
+  }
+  
+  .quote-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .quote-item:last-child {
+    border-bottom: none;
+    margin-bottom: 8px;
+  }
+  
+  .quote-item span:first-child {
+    color: var(--text-muted);
+  }
+  
+  .quote-item span:last-child {
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  
+  .quote-item.highlight {
+    margin-top: 12px;
+    padding: 16px;
+    background: rgba(169, 179, 136, 0.15);
+    border-radius: 8px;
+    border: none;
+  }
+  
+  .quote-item.highlight span:first-child {
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  
+  .quote-item.highlight span:last-child {
+    font-weight: 700;
+    color: #acb37b;
+    font-size: 18px;
+  }
+  
+  /* Insurance Type Badge */
+  .insurance-type-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  
+  .insurance-type-badge.smart-contract {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+  }
+  
+  .insurance-type-badge.oracle {
+    background: rgba(217, 119, 6, 0.15);
+    color: #f59e0b;
+  }
+  
+  .insurance-type-badge.bridge {
+    background: rgba(236, 72, 153, 0.15);
+    color: #ec4899;
+  }
+  
+  .insurance-type-badge.custom {
+    background: rgba(96, 165, 250, 0.15);
+    color: #60a5fa;
+  }
+  
+  /* Quote Status Indicator */
+  .processing-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .pulse {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #acb37b;
+    animation: pulse 1.5s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  
+  /* Additional Features */
+  .info-tooltip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-left: 6px;
+    cursor: help;
+    position: relative;
+  }
+  
+  .info-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 6px;
+    font-size: 12px;
+    color: white;
+    z-index: 100;
+  }
+  
+  /* Risk Level Indicator */
+  .risk-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  
+  .risk-label {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  
+  .risk-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .risk-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.3s ease;
+  }
+  
+  .risk-fill.low {
+    background: #4ade80;
+    width: 25%;
+  }
+  
+  .risk-fill.medium {
+    background: #f59e0b;
+    width: 50%;
+  }
+  
+  .risk-fill.high {
+    background: #ef4444;
+    width: 75%;
+  }
+  
+  .risk-fill.critical {
+    background: linear-gradient(90deg, #ef4444, #b91c1c);
+    width: 100%;
+  }
+  
+  .risk-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .insurance-form-container {
+      flex-direction: column;
+    }
+    
+    .quote-result {
+      width: 100%;
+      margin-top: 32px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      gap: 24px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .insurance-page {
+      padding: 32px 16px;
+    }
+    
+    .insurance-form,
+    .quote-result {
+      padding: 24px 16px;
+    }
+  }
