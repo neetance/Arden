@@ -10,6 +10,7 @@ import Register from "./components/Register";
 import Claims from "./components/Claims";
 import Button1 from "./components/Button1";
 import Button2 from "./components/Button2";
+import Claim from "./components/Claim";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         {/* New routes */}
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/claim" element={<Claim />} />
         <Route path="/claims" element={<Claims />} />
         <Route path="/button1" element={<Button1 />} />
         <Route path="/button2" element={<Button2 />} />

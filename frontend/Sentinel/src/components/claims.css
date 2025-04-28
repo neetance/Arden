@@ -88,7 +88,7 @@
   
   /* ====== Claim Card ====== */
   .claim-card {
-    background: var(--bg-card);
+    /* background: var(--bg-card); */
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-light);
     border-radius: 16px;
