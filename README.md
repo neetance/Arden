@@ -7,7 +7,6 @@ Arden is a decentralized insurance protocol deployed on Swell Chain that leverag
 ## Table of Contents
 
 - [Overview](#overview)
-- [Architecture](#architecture)
 - [Key Features](#key-features)
 - [Workflow](#workflow)
 - [AVS Integration with EigenLayer](#avs-integration-with-eigenlayer)
@@ -21,17 +20,6 @@ Arden is a decentralized insurance protocol deployed on Swell Chain that leverag
 ## Overview
 
 Arden enables users to purchase customizable insurance policies which are minted as NFTs. Users can submit claims with supporting metadata stored on IPFS. A decentralized set of EigenLayer AVS operators vote on the validity of the claims. Claims that meet a quorum threshold are settled automatically. AVS operators who vote dishonestly can be penalized via slashing.
-
----
-
-## Architecture
-
-- `InsuranceManager.sol`: Handles policy creation, NFT minting, and premium tracking.
-- `ClaimManager.sol`: Manages claim submissions, operator voting, threshold evaluation, and payouts.
-- `AVSOperatorRegistry.sol`: Registers and tracks trusted AVS nodes.
-- `SlashingController.sol`: Applies slashing logic when dishonest voting behavior is detected.
-- `IPFS Module`: Stores policy metadata and user-uploaded media (images, documents).
-- Frontend: React-based dApp allowing users to create policies, file claims, and monitor claim decisions.
 
 ---
 
