@@ -15,9 +15,6 @@ Arden is a decentralized insurance protocol deployed on Swell Chain that leverag
 - [IPFS Integration](#ipfs-integration)
 - [Slashing Mechanism](#slashing-mechanism)
 - [Frontend Interface](#frontend-interface)
-- [Installation](#installation)
-- [Contributing](#contributing)
-- [License](#license)
 
 ---
 
