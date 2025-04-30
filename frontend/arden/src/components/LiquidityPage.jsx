@@ -8,6 +8,7 @@ import {
   FaHistory,
   FaInfoCircle,
 } from "react-icons/fa";
+import { ethers } from "ethers";
 
 const LiquidityPage = () => {
   const [amount, setAmount] = useState("");
@@ -23,33 +24,33 @@ const LiquidityPage = () => {
   const liquidityProviders = [
     {
       address: "0x71C...9E3f",
-      amount: "245,340.00",
+      amount: "5.61",
       share: "19.65%",
-      rewards: "2,834.21",
+      rewards: "6.83",
     },
     {
       address: "0x43A...2B7d",
-      amount: "183,251.12",
+      amount: "4.20",
       share: "14.67%",
-      rewards: "2,115.92",
+      rewards: "5.00",
     },
     {
       address: "0x89F...6C0e",
-      amount: "124,982.38",
+      amount: "4.01",
       share: "10.01%",
-      rewards: "1,443.79",
+      rewards: "4.78",
     },
     {
       address: "0x23D...5F4a",
-      amount: "98,742.19",
+      amount: "3.67",
       share: "7.91%",
-      rewards: "1,140.57",
+      rewards: "4.23",
     },
     {
       address: "0xB7C...1A2b",
-      amount: "76,321.45",
+      amount: "3.19",
       share: "6.11%",
-      rewards: "881.71",
+      rewards: "3.36",
     },
   ];
 
@@ -114,18 +115,34 @@ const LiquidityPage = () => {
       return;
     }
 
-    // Mock adding liquidity
-    const newLiquidity =
-      parseFloat(yourLiquidity.replace(/,/g, "")) + parseFloat(amount);
-    setYourLiquidity(
-      newLiquidity.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = provider.getSigner();
+    const contractAddress = "0x022c234d4C531444Bbdf8f1D82b19f4d9E8D4FF1";
+    const abi = [{"type":"constructor","inputs":[{"name":"poolAddr","type":"address","internalType":"address"}],"stateMutability":"nonpayable"},{"type":"function","name":"addLiquidity","inputs":[],"outputs":[],"stateMutability":"payable"},{"type":"function","name":"core","inputs":[],"outputs":[{"name":"","type":"address","internalType":"address"}],"stateMutability":"view"},{"type":"function","name":"getTotalLiquidity","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},{"type":"function","name":"makePayout","inputs":[{"name":"to","type":"address","internalType":"address"},{"name":"amount","type":"uint256","internalType":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"owner","inputs":[],"outputs":[{"name":"","type":"address","internalType":"address"}],"stateMutability":"view"},{"type":"function","name":"renounceOwnership","inputs":[],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"setCore","inputs":[{"name":"coreAddr","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"transferOwnership","inputs":[{"name":"newOwner","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"withdrawLiquidity","inputs":[{"name":"amount","type":"uint256","internalType":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"event","name":"LiquidityAdded","inputs":[{"name":"user","type":"address","indexed":true,"internalType":"address"},{"name":"amount","type":"uint256","indexed":false,"internalType":"uint256"}],"anonymous":false},{"type":"event","name":"LiquidityWithdrawn","inputs":[{"name":"user","type":"address","indexed":true,"internalType":"address"},{"name":"amount","type":"uint256","indexed":false,"internalType":"uint256"}],"anonymous":false},{"type":"event","name":"OwnershipTransferred","inputs":[{"name":"previousOwner","type":"address","indexed":true,"internalType":"address"},{"name":"newOwner","type":"address","indexed":true,"internalType":"address"}],"anonymous":false},{"type":"error","name":"Forbidden_Sender","inputs":[]},{"type":"error","name":"OwnableInvalidOwner","inputs":[{"name":"owner","type":"address","internalType":"address"}]},{"type":"error","name":"OwnableUnauthorizedAccount","inputs":[{"name":"account","type":"address","internalType":"address"}]},{"type":"error","name":"Value_Zero","inputs":[]},{"type":"error","name":"Withdraw_Amount_Exceeds_Balance","inputs":[]},{"type":"error","name":"Withdraw_Amount_Zero","inputs":[]}]
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const parsedAmount = ethers.utils.parseEther(amount);
+    const tx = contract.addLiquidity({ value: parsedAmount });
+    tx
+      .then((transaction) => {
+        console.log("Transaction sent:", transaction);
+        return transaction.wait();
       })
-    );
-    setAmount("");
+      .then((receipt) => {
+        console.log("Transaction confirmed:", receipt);
+        setYourLiquidity(
+          (parseFloat(yourLiquidity) + parseFloat(amount)).toFixed(2)
+        );
+        setTotalLiquidity(
+          (parseFloat(totalLiquidity) + parseFloat(amount)).toFixed(2)
+        );
+        setYourRewards(
+          (parseFloat(yourRewards) + parseFloat(amount) * 0.01).toFixed(2)
+        );
+      })
+      .catch((error) => {
+        console.error("Error adding liquidity:", error);
+      });
 
-    // Show success message or transaction confirmation here
     alert(
       `Successfully added ${parseFloat(amount).toLocaleString("en-US", {
         minimumFractionDigits: 2,
