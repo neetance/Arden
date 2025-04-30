@@ -3,9 +3,9 @@ pragma solidity ^0.8.20;
 
 import {ERC721} from "../lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {SentinelCore} from "./sentinelCore.sol";
+import {ArdenCore} from "./ardenCore.sol";
 
-contract SentinelNFT is ERC721, Ownable {
+contract ArdenNFT is ERC721, Ownable {
     // errors
     error Invalid_Premium_Amount();
 
@@ -14,17 +14,16 @@ contract SentinelNFT is ERC721, Ownable {
 
     mapping(uint256 tokenId => string tokenURI) descriptions;
     mapping(uint256 tokenId => string data) claimData;
+    mapping(uint256 tokenId => string uri) tokenURIs;
 
-    SentinelCore public core;
+    ArdenCore public core;
     address public immutable pool;
 
     // constructor
     constructor(
-        address coreAddr,
         address poolAddr
-    ) ERC721("SentinelNFT", "SNT") Ownable(msg.sender) {
+    ) ERC721("ArdenNFT", "SNT") Ownable(msg.sender) {
         tokenId = 0;
-        core = SentinelCore(coreAddr);
         pool = poolAddr;
     }
 
@@ -36,19 +35,25 @@ contract SentinelNFT is ERC721, Ownable {
      * @param description The description of the policy.
      * @param duration The duration of the policy in seconds.
      * @param amount The amount of ETH to be paid as premium.
+     * @param insuranceType The type of insurance.
+     * @param uri The URI of the NFT.
      * NOTE: The msg.value must be equal to the premium amount set in the core contract.
      */
     function mint(
         address to,
         string memory description,
         uint256 duration,
-        uint256 amount
+        uint256 amount,
+        uint8 insuranceType,
+        string memory uri
     ) external payable {
-        if (msg.value != core.getPremium()) revert Invalid_Premium_Amount();
+        if (msg.value != core.getPremium(insuranceType, amount, duration))
+            revert Invalid_Premium_Amount();
 
         _safeMint(to, tokenId);
         descriptions[tokenId] = description;
         tokenId++;
+        tokenURIs[tokenId] = uri;
 
         core.registerPolicy(tokenId - 1, to, description, duration, amount);
         payable(address(pool)).transfer(msg.value);
@@ -79,7 +84,19 @@ contract SentinelNFT is ERC721, Ownable {
         return claimData[id];
     }
 
-    // function tokenURI(uint256 id) public view override returns (string memory) {
-    //     return string(abi.encodePacked())
-    // }
+    /**
+     * @dev Returns the token URI of the policy NFT.
+     * @param id The tokenId of the policy NFT.
+     */
+    function tokenURI(uint256 id) public view override returns (string memory) {
+        return tokenURIs[id];
+    }
+
+    /**
+     * @dev Sets the core contract address.
+     * @param coreAddr The address of the core contract.
+     */
+    function setCore(address coreAddr) external onlyOwner {
+        core = ArdenCore(coreAddr);
+    }
 }

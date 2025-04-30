@@ -4,12 +4,12 @@ pragma solidity ^0.8.20;
 import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
-contract SentinelPool is ERC20, Ownable {
+contract ArdenPool is ERC20, Ownable {
     // errors
     error Insufficient_Balance(uint256 amount);
 
     // constructor
-    constructor() ERC20("Sentinel", "SNT") Ownable(msg.sender) {}
+    constructor() ERC20("Arden", "ARD") Ownable(msg.sender) {}
 
     // functions
 

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {SentinelNFT} from "./sentinelNFT.sol";
-import {MyServiceManager} from "./avs/MyServiceManager.sol";
+import {ArdenNFT} from "./ardenNFT.sol";
+import {MyServiceManager} from "./avs/AVSManager.sol";
 import {PoolManager} from "./poolManager.sol";
 
-contract SentinelCore {
+contract ArdenCore {
     // errors
     error Policy_Not_Found(uint256 id);
     error Policy_Already_Active(uint256 id);
@@ -44,11 +44,9 @@ contract SentinelCore {
 
     // state variables
     uint256 public s_totalCount;
-    uint256 public MAX_PREMIUM = 0.07 ether;
-    uint256 public MIN_PREMIUM = 0.03 ether;
 
     MyServiceManager public s_avsManager;
-    SentinelNFT public s_sentinelNFT;
+    ArdenNFT public s_ardenNFT;
     PoolManager public s_poolManager;
 
     // mappings
@@ -75,14 +73,14 @@ contract SentinelCore {
         s_totalCount = 0;
         s_avsManager = MyServiceManager(avsManagerAddr);
         s_poolManager = PoolManager(poolManagerAddr);
-        s_sentinelNFT = SentinelNFT(nftAddr);
+        s_ardenNFT = ArdenNFT(nftAddr);
     }
 
     // functions
 
     /**
      * @dev Registers a new policy.
-     * NOTE: This function is called by the SentinelNFT contract when a new policy NFT is minted.
+     * NOTE: This function is called by the ArdenNFT contract when a new policy NFT is minted.
      * @param id The tokenId of the policy NFT.
      * @param owner The address of the policy owner.
      * @param description The description of the policy.
@@ -144,7 +142,7 @@ contract SentinelCore {
 
         policy.isActive = false;
         policy.hasClaimed = true;
-        s_sentinelNFT.setClaimData(id, proof);
+        s_ardenNFT.setClaimData(id, proof);
 
         s_avsManager.createClaim(id);
         emit PolicyClaimed(id, msg.sender, proof);
@@ -203,14 +201,36 @@ contract SentinelCore {
         emit PayoutMade(to, voters, netAmount);
     }
 
-    function getPremium() public view returns (uint256) {
-        uint256 base = 0.5 ether; // base currently set to 5
-        uint256 totalLiquidity = s_poolManager.getTotalLiquidity();
-        uint256 targetLiquidity = 100 ether;
+    /**
+     * @dev Calculate insurance premium based on coverage type, amount and duration
+     * @param insuranceType Type of insurance (1=Smart Contract, 2=Oracle, 3=Bridge)
+     * @param coverageAmountWei Amount to be insured in wei
+     * @param durationDays Duration of coverage in days
+     * @return premium The calculated premium in wei
+     */
+    function getPremium(
+        uint8 insuranceType,
+        uint256 coverageAmountWei,
+        uint256 durationDays
+    ) public pure returns (uint256) {
+        uint256 baseRateBps = 200;
+        uint256 riskMultiplier;
+        if (insuranceType == 1) {
+            riskMultiplier = 120;
+        } else if (insuranceType == 2) {
+            riskMultiplier = 150;
+        } else if (insuranceType == 3) {
+            riskMultiplier = 180;
+        } else {
+            riskMultiplier = 100;
+        }
 
-        uint256 premium = (base * targetLiquidity) / (10 * totalLiquidity); // 0.5 * (target / totalLiquidity)
-        if (premium > MAX_PREMIUM) premium = MAX_PREMIUM;
-        if (premium < MIN_PREMIUM) premium = MIN_PREMIUM;
+        uint256 durationMultiplier = (durationDays * 100) / 30;
+
+        uint256 premium = coverageAmountWei;
+        premium = (premium * baseRateBps) / 10000;
+        premium = (premium * riskMultiplier) / 100;
+        premium = (premium * durationMultiplier) / 100;
 
         return premium;
     }

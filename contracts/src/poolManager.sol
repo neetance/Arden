@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {SentinelPool} from "./pool.sol";
+import {ArdenPool} from "./pool.sol";
+import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
-contract PoolManager {
+contract PoolManager is Ownable {
     // errors
     error Value_Zero();
     error Withdraw_Amount_Zero();
@@ -15,13 +16,12 @@ contract PoolManager {
     event LiquidityWithdrawn(address indexed user, uint256 amount);
 
     // state variables
-    SentinelPool pool;
-    address public immutable core;
+    ArdenPool pool;
+    address public core;
 
     // constructor
-    constructor(address poolAddr, address coreAddr) {
-        pool = SentinelPool(poolAddr);
-        core = coreAddr;
+    constructor(address poolAddr) Ownable(msg.sender) {
+        pool = ArdenPool(poolAddr);
     }
 
     // functions
@@ -79,5 +79,14 @@ contract PoolManager {
      */
     function getTotalLiquidity() public view returns (uint256) {
         return address(this).balance;
+    }
+
+    /**
+     * @dev Sets the core contract address.
+     * @param coreAddr The address of the core contract.
+     * NOTE: Can only be called by the owner.
+     */
+    function setCore(address coreAddr) external onlyOwner {
+        core = coreAddr;
     }
 }
