@@ -14,6 +14,11 @@ const Home = () => {
           CLAIM
         </button>
       </Link>
+      <Link to="/liquidity">
+        <button className="bg-white text-black px-6 py-2 rounded-full text-sm hover:scale-105 transition-transform Claims">
+          Liquidity
+        </button>
+      </Link>
       <Link to="/claims">
         <button className="bg-white text-black px-6 py-2 rounded-full text-sm hover:scale-105 transition-transform Claims">
           CLAIMS

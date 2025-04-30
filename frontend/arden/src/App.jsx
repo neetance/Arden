@@ -11,6 +11,7 @@ import Claims from "./components/Claims";
 import Button1 from "./components/Button1";
 import Button2 from "./components/Button2";
 import Claim from "./components/Claim";
+import LiquidityPage from "./components/LiquidityPage";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/claims" element={<Claims />} />
         <Route path="/button1" element={<Button1 />} />
         <Route path="/button2" element={<Button2 />} />
+        <Route path="/liquidity" element={<LiquidityPage/>}  ></Route>
       </Routes>
     </Router>
   );
